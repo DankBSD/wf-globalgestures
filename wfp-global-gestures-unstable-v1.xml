@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="wfp_global_gestures_unstable_v1">
+	<copyright>
+		This is free and unencumbered software released into the public domain.
+
+		Anyone is free to copy, modify, publish, use, compile, sell, or
+		distribute this software, either in source code form or as a compiled
+		binary, for any purpose, commercial or non-commercial, and by any
+		means.
+
+		In jurisdictions that recognize copyright laws, the author or authors
+		of this software dedicate any and all copyright interest in the
+		software to the public domain. We make this dedication for the benefit
+		of the public at large and to the detriment of our heirs and
+		successors. We intend this dedication to be an overt act of
+		relinquishment in perpetuity of all present and future rights to this
+		software under copyright law.
+
+		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+		EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+		MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+		IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+		OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+		ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+		OTHER DEALINGS IN THE SOFTWARE.
+
+		For more information, please refer to http://unlicense.org/
+	</copyright>
+
+	<description summary="request touchpad gestures to be delivered regardless of focus">
+		This protocol allows clients to ask the compositor to deliver touchpad gestures
+		(via the pointer_gestures_unstable_v1 protocol) of a particular requested kind
+		(e.g. only 3-finger swipes) to a surface regardless of its focus state.
+
+		This is indented for desktop environment components that use e.g. the
+		wlr_layer_shell_unstable_v1 protocol.
+
+		This may be treated as a privileged protocol, however touchpad gestures
+		are not nearly as sensitive as something like keyboard input, so the worst
+		that could happen if a bad client uses this is just annoying behavior.
+	</description>
+
+	<interface name="zwfp_global_gesture_manager_v1" version="1">
+		<description summary="global object for global gesture requests">
+			This global object is used for global gesture requests.
+		</description>
+		<enum name="gesture">
+			<entry name="swipe" value="0" summary="The zwp_pointer_gesture_swipe_v1 gesture"/>
+			<entry name="pinch" value="1" summary="The zwp_pointer_gesture_pinch_v1 gesture"/>
+			<entry name="hold" value="2" summary="The zwp_pointer_gesture_hold_v1 gesture"/>
+		</enum>
+		<request name="request_global_gesture">
+			<description summary="request a global gesture">
+				Request a particular pointer gesture to always be delivered to a surface.
+			</description>
+			<arg name="gesture" type="uint" enum="gesture"/>
+			<arg name="fingers" type="uint" summary="number of fingers"/>
+			<arg name="surface" type="object" interface="wl_surface"/>
+			<arg name="global_gesture" type="new_id" interface="zwfp_global_gesture_v1"/>
+		</request>
+	</interface>
+
+	<interface name="zwfp_global_gesture_v1" version="1">
+		<description summary="a global gesture requests">
+			The requested gesture will be delivered to the requested surface as long as
+			this object is alive.
+		</description>
+		<request name="destroy" type="destructor">
+			<description summary="destroy the global gesture object"/>
+		</request>
+	</interface>
+</protocol>
